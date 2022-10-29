@@ -1,0 +1,15 @@
+{% extends 'art/base.html' %}
+
+{% block content %}
+<main class="main-structure primary-color-bg">
+  <div class="light-form">
+    <h2 class="align-center">Thank you for your purchase!</h2>
+    <p class="align-center">Your invoice number is {{ invoice }}. You should
+      receive a purchase confirmation email within 10 minutes. If you don't, please send
+      us a message through the Contact Us page and reference your invoice number.</p>
+    <section class="align-center">
+      <a href="{% url 'home' %}" class="light-button">Head back home</a>
+    </section>
+  </div>
+</main>
+{% endblock content %}

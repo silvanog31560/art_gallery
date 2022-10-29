@@ -1,0 +1,89 @@
+{% extends "art/base.html" %}
+
+{% block content %}
+
+<main class="main-structure primary-color-bg">
+   {% if messages %}
+   <div class="product-messages">
+       {% for message in messages %}
+         {% if message.tags == 'success' or message.tags == 'info' %}
+           <span {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</span>
+         {% endif %}
+       {% endfor %}
+   </div>
+   {% endif %}
+
+   <h2 class="align-center">Order Summary</h2>
+  <table class="cart light-form">
+
+    <tr>
+      <th>&nbsp;</th>
+      <th>Price</th>
+      <th>Qty</th>
+      <th>Available</th>
+      <th>Extended Price</th>
+      <th>&nbsp;</th>
+    </tr>
+
+    {% for item in order %}
+      <tr>
+        <td>
+          {% if item.items.landscape %}
+            <img src="{{ item.items.landscape_thumbnail.url }}" alt="{{ item.items.title }}"
+               id="cart-thumbnail">
+          {% elif item.items.portrait %}
+            <img src="{{ item.items.portrait_thumbnail.url }}" alt="{{ item.items.title }}"
+               id="cart-thumbnail">
+          {% elif item.items.wm_landscape %}
+            <img src="{{ item.items.wm_landscape_thumbnail.url }}" alt="{{ item.items.title }}"
+               id="cart-thumbnail">
+          {% elif item.items.wm_portrait %}
+            <img src="{{ item.items.wm_portrait_thumbnail.url }}" alt="{{ item.items.title }}"
+               id="cart-thumbnail">
+          {% endif %}
+        </td>
+        <td>${{ item.items.get_display_price }}</td>
+        <td>
+          <form class="" action="{% url 'shopping_cart:update-quantity' item.items.id %}" method="GET">
+          <input type="number" name="item_qty" value="{{ item.quantity }}" min="1">
+          <input type="submit" name="" value="Update" class="light-button">
+          </form>
+        </td>
+        <td>{{ item.items.stock }}</td>
+        <td>${{ item.total_price }}</td>
+        <td>
+          <a href="{% url 'shopping_cart:delete_from_cart' item.id %}">
+            <i data-feather="trash-2"></i></a>
+        </td>
+      </tr>
+    {% empty %}
+      <tr>
+        <td colspan="6" class="align-center"> You have not added any items yet.</td>
+      </tr>
+    {% endfor %}
+
+      {% if order %}
+      <tr>
+        <th colspan="6" class="align-center">
+          Order Total: ${{ cart_total }}
+        </th>
+      </tr>
+      {% endif %}
+    <tr>
+      <td colspan="6" class="align-center">
+        <a href="{% url 'home' %}" class="light-button">
+          {% if order %}Continue Shopping{% else %}Add Items to Cart {% endif %}
+        </a>
+        {% if order and cart_user == None %}
+          <a href="{% url 'accounts:shipping-address' %}"
+            class="light-button">Proceed To Shipping Information</a>
+        {% elif order and cart_user %}
+          <a href="{% url 'shopping_cart:checkout' %}"
+            class="green-button">Proceed To Checkout</a>
+        {% endif %}
+      </td>
+    </tr>
+  </table>
+
+</main>
+{% endblock %}

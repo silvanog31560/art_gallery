@@ -1,0 +1,25 @@
+{% extends "art/base.html" %}
+
+{% block title %}Pending Orders{% endblock title %}
+
+{% block content %}
+<main class="main-structure primary-color-bg">
+  <div class="light-form">
+
+    <h2 class="align-center">Pending Orders</h2>
+    <h4 class="align-center">Click invoice number to update tracking number.</h4>
+
+    {% for item in pending_items %}
+      <p><strong>CUSTOMER:</strong> {{ item.user }},
+      <strong>ITEM:</strong> {{ item.items }},
+      <strong>Invoice:</strong><a href="{% url 'shopping_cart:update-pending-orders' %}?invoice_number={{ item.invoice }}"
+          class="light-button">
+           {{ item.invoice }}
+      </a></p>
+    {% empty %}
+      <h2 class="align-center">All orders are complete!</h2>
+    {% endfor %}
+  </div>
+</main>
+
+{% endblock content %}

@@ -1,0 +1,37 @@
+{% extends "art/base.html" %}
+
+{% block title %}Art Delete{% endblock title %}
+
+{% block content %}
+<main class="main-structure primary-color-bg">
+  <div class="light-form">
+    <h2 class="align-center">Delete</h2>
+    <section class="align-center">
+      {% if product_delete.landscape %}
+        <img src="{{ product_delete.landscape_medium.url }}" alt="{{ product }}">
+      {% elif product_delete.portrait %}
+        <img src="{{ product_delete.portrait_medium.url }}" alt="{{ product }}">
+      {% elif product_delete.wm_landscape %}
+        <img src="{{ product_delete.wm_landscape_medium.url }}" alt="{{ product }}">
+      {% elif product_delete.wm_portrait %}
+        <img src="{{ product_delete.wm_portrait_medium.url }}" alt="{{ product }}">
+      {% endif %}
+    </section>
+    <form method="post">
+      {% csrf_token %}
+      <table class="align-table">
+        <tr>
+          <td colspan=2>Are you sure you want to delete "{{ product_delete }}"?</td>
+        </tr>
+        <tr>
+          <td colspan="2" align="center">
+            <a href="{% url 'products:product-detail' product_delete.id %}"
+              class="light-button">Cancel</a>
+            <input type="submit" value="Delete" class="red-button">
+          </td>
+        </tr>
+      </table>
+    </form>
+  </div>
+</main>
+{% endblock content %}

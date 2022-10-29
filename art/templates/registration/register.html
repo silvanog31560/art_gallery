@@ -1,0 +1,72 @@
+{% extends "art/base.html" %}
+
+{% block title %}User Registration{% endblock title %}
+
+{% block content %}
+<main class="main-structure primary-color-bg">
+  <div class="light-form">
+    <h2 class="align-center">User Registration</h2>
+    <p class="align-center">Enter your username and password to register.</p>
+
+    <form method="post">
+      {% csrf_token %}
+    <table>
+      <tbody>
+        <tr class="bottom-padding">
+          <th class="reg-th">
+            <label for="id_username">Username:</label>
+          </th>
+          <td>
+            <input type="text" name="username" autofocus id="id_username">
+            <br>
+            <span class="helptext">Required. 150 characters or fewer.
+              Letters, digits and @/./+/-/_ only.</span>
+          </td>
+        </tr>
+        <tr class="bottom-padding">
+          <th class="reg-th">
+            <label for="id_email">Email Address:</label>
+          </th>
+          <td>
+            <input type="email" name="email" autofocus id="id_email">
+          </td>
+        </tr>
+        <tr class="bottom-padding">
+          <th class="reg-th">
+            <label for="id_password1">Password:</label>
+          </th>
+          <td>
+            <input type="password" name="password1" autocomplete="new-password">
+            <br>
+            <span class="helptext">
+              Your password can’t be too similar to your other personal information.
+              Your password must contain at least 8 characters.
+              Your password can’t be a commonly used password.
+              Your password can’t be entirely numeric.
+            </span>
+          </td>
+        </tr>
+        <tr class="bottom-padding">
+          <th class="reg-th">
+            <label for="id_password2">Password confirmation:</label>
+          </th>
+          <td>
+            <input type="password" name="password2" autocomplete="new-password">
+            <br>
+            <span class="helptext">
+              Enter the same password as before, for verification.
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" align="center">
+            <input type="submit" value="Register" class="light-button">
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <input type="hidden" name="next" value="{{ next }}" />
+    </form>
+  </div>
+</main>
+{% endblock content %}

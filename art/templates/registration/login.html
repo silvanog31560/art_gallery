@@ -1,0 +1,38 @@
+{% extends "art/base.html" %}
+
+{% block title %}User Login{% endblock title %}
+
+{% block content %}
+<main class="main-structure primary-color-bg">
+  <div class="light-form">
+    <h2 class="align-center">Please Log In</h2>
+    <p class="align-center">You must be logged in to access the user menu.</p>
+
+    <form method="post">
+    <table class="align-table">
+        {{ form.as_table }}
+        {% if form.errors %}
+           {% for field in form %}
+               {% for error in field.errors %}
+                  <div class="form-error">
+                       <strong>{{ error|escape }}</strong>
+                  </div>
+               {% endfor %}
+           {% endfor %}
+         {% endif %}
+        <tr>
+            <td colspan="2" align="center">
+              <input type="submit" value="Log In" class="light-button">
+            </td>
+        </tr>
+    </table>
+    <p class="align-center">Not registered yet? <a href="{% url 'accounts:register' %}"
+      class="text-decor">Register here</a>.</p>
+      <p class="align-center"><a href="{% url 'password_reset' %}"
+        class="text-decor">Forgot Username or Password?</a></p>
+    <input type="hidden" name="next" value="{{ next }}" />
+    {% csrf_token %}
+    </form>
+  </div>
+</main>
+{% endblock content %}

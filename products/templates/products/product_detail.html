@@ -1,0 +1,104 @@
+{% extends "art/base.html" %}
+{% load static %}
+
+{% block title %}product_detail.title{% endblock title %}
+
+{% block content %}
+<main class="main-structure primary-color-bg">
+  {% if messages %}
+  <div class="product-messages">
+      {% for message in messages %}
+        {% if message.tags == 'success' or message.tags == 'info' %}
+          <span {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</span>
+        {% endif %}
+      {% endfor %}
+  </div>
+  {% endif %}
+
+  <h1 class="align-center"> {{ product_detail.title }}</h1>
+
+  <section class="align-center">
+    {% if product_detail.landscape %}
+      <img
+        srcset="{{ product_detail.landscape_medium.url }} 703w, {{ product_detail.landscape_regular.url }} 800w"
+        sizes="(max-width: 688px) 703px,
+               800px"
+        src="{{ product_detail.landscape_regular.url }}"
+        alt="Art Detail Image" />
+    {% elif product_detail.portrait %}
+      <img
+        srcset="{{ product_detail.portrait_medium.url }} 703w, {{ product_detail.portrait_regular.url }} 800w"
+        sizes="(max-width: 688px) 703px,
+               800px"
+        src="{{ product_detail.portrait_regular.url }}"
+        alt="Art Detail Image" />
+    {% elif product_detail.wm_landscape %}
+      <img
+        srcset="{{ product_detail.wm_landscape_medium.url }} 703w, {{ product_detail.wm_landscape_regular.url }} 800w"
+        sizes="(max-width: 688px) 703px,
+               800px"
+        src="{{ product_detail.wm_landscape_regular.url }}"
+        alt="Art Detail Image" />
+    {% elif product_detail.wm_portrait %}
+      <img
+        srcset="{{ product_detail.wm_portrait_medium.url }} 703w, {{ product_detail.wm_portrait_regular.url }} 800w"
+        sizes="(max-width: 688px) 703px,
+               800px"
+        src="{{ product_detail.wm_portrait_regular.url }}"
+        alt="Art Detail Image" />
+    {% endif %}
+  </section>
+
+  <table class="product">
+
+    <tr class="bottom-padding">
+      <th>Description: </th>
+      <td>{{ product_detail.description }}</td>
+    </tr>
+    <tr>
+      <th>Category: </th>
+      <td>{{ product_detail.get_category_display }}</td>
+    </tr>
+    {% if product_detail.stock < 1 %}
+      <tr>
+        <td colspan="2" class="align-center">
+          <strong>Sold Out</strong>
+        </td>
+      </tr>
+    {% else %}
+      <tr>
+        <th>Available:</th>
+        <td>{{ product_detail.stock }}</td>
+      </tr>
+      <tr>
+        <th>Price:</th>
+        <td>${{ product_detail.get_display_price }}</td>
+      </tr>
+
+      <tr>
+        <form class="" action="{% url 'shopping_cart:add_to_cart' product_detail.id %}" method="GET">
+          <th>
+            <label for="item_qty">Quantity: </label>
+          </th>
+          <td>
+            <input type="number" name="item_qty" value="1" min="1">
+            <input type="submit" name="" value="Add to Cart" class="light-button">
+          </td>
+        </form>
+      </tr>
+    {% endif %}
+  </table>
+  <hr>
+      <div class="btn-flex">
+          <a href="{% url 'products:product-list' product_detail.category 'title' %}"
+            class="light-button">Go Back</a>
+          {% if perms.product.delete_product %}
+            <a href="{% url 'products:product-update' product_detail.id %}"
+              class="light-button">Update</a>
+            <a href="{% url 'products:product-delete' product_detail.id %}"
+              class="yellow-button">Delete</a>
+          {% endif %}
+      </div>
+</main>
+
+{% endblock content %}

@@ -1,0 +1,50 @@
+{% extends "art/base.html" %}
+
+{% block title %}Update Information{% endblock title %}
+
+{% block content %}
+<main class="main-structure primary-color-bg">
+  <div class="light-form">
+    <h2 class="align-center">Update Information</h2>
+    <p class="align-center">Update Your Username Or Email.</p>
+    <form method="post">
+      {% csrf_token %}
+      {% if form.errors %}
+         {% for field in form %}
+             {% for error in field.errors %}
+                <div class="form-error">
+                     <strong>{{ error|escape }}</strong>
+                </div>
+             {% endfor %}
+         {% endfor %}
+      {% endif %}
+      <table class="align-table">
+        <tbody>
+          <tr class="bottom-padding">
+            <th class="reg-th">
+              <label for="id_username">Username:</label>
+            </th>
+            <td>
+              <input type="text" name="username" required id="id_username"
+                value="{{ request.user }}">
+            </td>
+          </tr>
+          <tr class="bottom-padding">
+            <th class="reg-th">
+              <label for="id_email">Email Address:</label>
+            </th>
+            <td>
+              <input type="email" name="email" required id="id_email"
+                value="{{ request.user.email }}">
+            </td>
+          </tr>
+        <tr>
+          <td colspan="2" align="center">
+            <input type="submit" value="Update" class="light-button">
+          </td>
+        </tr>
+      </table>
+    </form>
+  </div>
+</main>
+{% endblock %}

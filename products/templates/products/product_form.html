@@ -1,0 +1,23 @@
+{% extends "art/base.html" %}
+
+{% block title %}Add New{% endblock title %}
+{% block styles %}{% endblock styles %}
+
+{% block content %}
+<main class="main-structure primary-color-bg">
+  <div class="light-form">
+    <h2 class="align-center">Add Art or Craft</h2>
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+    <table class="align-table">
+      {{ form.as_table }}
+      <tr>
+        <td colspan="2" align="center">
+          <a href="{% url 'home' %}" class="light-button">Cancel</a>
+          <input type="submit" value="Add" class="green-button">
+      </tr>
+    </table>
+    </form>
+  </div>
+</main>
+{% endblock content %}

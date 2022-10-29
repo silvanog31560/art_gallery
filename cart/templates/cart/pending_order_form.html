@@ -1,0 +1,26 @@
+{% extends "art/base.html" %}
+
+{% block title %}Pending Order Update{% endblock title %}
+
+{% block content %}
+<main class="main-structure primary-color-bg">
+  <div class="light-form">
+
+    <h2 class="align-center">Invoice: {{ invoice_number }}</h2>
+    {{ tracking }}
+    {% for item in pending_order %}
+      <p>
+        <strong>CUSTOMER:</strong> {{ item.user }},
+        <strong>ITEM:</strong> {{ item.items }},
+        <strong>Quantity:</strong> {{ item.quantity }}
+      </p>
+    {% endfor %}
+
+    <h2>Update Tracking Number</h2>
+    <form class="" action="" method="POST">{% csrf_token %}
+      <label for="tracking">Tracking Number: </label>
+      <input type="text" name="tracking">
+      <input type="submit" name="" value="Update" class="light-button">
+    </form>
+
+{% endblock content %}

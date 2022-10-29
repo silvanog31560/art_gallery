@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>
+      {% block title %}
+      {{ page_title|default:"Untitled Page" }}
+      {% endblock title %}
+    </title>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <link href="{% static 'art/css/main.css' %}" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ballet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=MonteCarlo">
+    {% block styles %}{% endblock styles %}
+  </head>
+
+  <body class="body-structure">
+
+    <header class="header-structure">
+      <h1>Aryanna's Art</h1>
+      {% if user.is_authenticated %}
+        <ul class="push align-end">
+          <li>Hello {{ user }}! <i data-feather="user"></i>
+            <ul class="logout-dropdown">
+                <li><a href="{% url 'accounts:update-user' %}">
+                Edit Profile</a></li>
+              <li><a href="{% url 'password_change' %}">
+                Update Password</a></li>
+              <li><a href="{% url 'logout' %}?next=/">
+                Log Out <i data-feather="log-out"></i></a></li>
+            </ul>
+          </li>
+        </ul>
+      {% else %}
+        <a class="push align-end" href="{% url 'login' %}?next=/">
+          <i data-feather="log-in"></i> Log in</a>
+      {% endif %}
+    </header>
+
+    <nav>
+      <ul class="nav-structure">
+        <li id="nav-li"><a href="{% url 'home' %}"><i data-feather="home"></i> Home</a></li>
+        <li>Artwork <i data-feather="chevron-down"></i>
+          <ul class="dropdown">
+            <li><a href="{% url 'products:product-list' filter_val='AP' orderby='title' %}">Acrylic Paintings</a></li>
+            <li><a href="{% url 'products:product-list' filter_val='DA' orderby='title' %}">Digital Art</a></li>
+            <li><a href="{% url 'products:product-list' filter_val='OP' orderby='title' %}">Oil Paintings</a></li>
+            <li><a href="{% url 'products:product-list' filter_val='WP' orderby='title' %}">Watercolor Paintings</a></li>
+            <li><a href="{% url 'products:product-list' filter_val='CR' orderby='title' %}">Crafts</a></li>
+          </ul>
+        </li>
+        <li><a href="{% url 'contact:contact-us' %}">Contact Us</a></li>
+        <li><a href="{% url 'reviews:reviews-list' %}">Reviews</a></li>
+        {% if perms.products.add_products %}
+        <li>Admin <i data-feather="chevron-down"></i>
+          <ul class="dropdown">
+            <li><a href="{% url 'products:add-product' %}">Add Product</a></li>
+            <li><a href="{% url 'shopping_cart:pending-orders' %}">Pending Orders</a></li>
+          </ul>
+        </li>
+        {% endif %}
+        <li><a href="{% url 'shopping_cart:order-summary' %}">
+        <i data-feather="shopping-cart"></i></a></li>
+      </ul>
+    </nav>
+
+      {% block content %}
+
+      {% endblock content %}
+
+    <!-- <footer class="footer-structure">Copyright &copy;
+    </footer> -->
+      <script src="{% static 'art/js/script.js' %}"></script>
+      <script>
+      feather.replace()
+    </script>
+  </body>
+</html>

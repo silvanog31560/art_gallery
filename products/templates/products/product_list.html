@@ -1,0 +1,80 @@
+{% extends "art/base.html" %}
+
+{% block title %}Art List{% endblock title %}
+
+{% block content %}
+<main class="main-structure primary-color-bg">
+    <div class="dropdown-sort">
+      <button class="dropbtn">Sort by <i data-feather="chevron-down"></i></button>
+      <div id="myDropdown" class="dropdown-sort-content">
+        <a href="{% url 'products:product-list' filter_val=filter orderby='title' %}">Title</a>
+        <a href="{% url 'products:product-list' filter_val=filter orderby='-added' %}">Newest First</a>
+        <a href="{% url 'products:product-list' filter_val=filter orderby='price' %}">Price: low to high</a>
+        <a href="{% url 'products:product-list' filter_val=filter orderby='-price' %}">Price: high to low</a>
+      </div>
+    </div>
+
+    {% if filter == 'AP' %}
+      <h1 class="main-heading">Acrylic Paintings</h1>
+    {% elif filter == 'DA' %}
+      <h1 class="main-heading">Digital Art</h1>
+    {% elif filter == 'OP' %}
+      <h1 class="main-heading">Oil Paintings</h1>
+    {% elif filter == 'WP' %}
+      <h1 class="main-heading">Watercolor Paintings</h1>
+    {% else %}
+      <h1 class="main-heading">Crafts</h1>
+    {% endif %}
+  <h4 class="align-center no-marg-n-pad bottom-padding">Click image for more details and full size image.</h4>
+
+
+    <div class="cards">
+    {% for product in product_list %}
+      <section class="card card-structure align-center">
+          <a href="{{ product.get_absolute_url }}">
+          <h3 class="align-center">{{ product }}</h3>
+          {% if product.landscape %}
+            <img src="{{ product.landscape_thumbnail.url }}" alt="{{ product }}"
+              width="300" height="225">
+          {% elif product.portrait %}
+            <img src="{{ product.portrait_thumbnail.url }}" alt="{{ product }}"
+              width="225" height="300">
+          {% elif product.wm_landscape %}
+            <img src="{{ product.wm_landscape_thumbnail.url }}" alt="{{ product }}"
+              width="300" height="225">
+          {% elif product.wm_portrait %}
+            <img src="{{ product.wm_portrait_thumbnail.url }}" alt="{{ product }}"
+              width="225" height="300">
+          {% endif %}
+          <p class="no-marg-n-pad">{{ product.description }}</p>
+          {% if product.stock > 0 %}
+            ${{ product.get_display_price }}
+          {% else %}
+            <p>Not Available</p>
+          {% endif %}
+        </a>
+      </section>
+    {% empty %}
+      <h2 class="align-center">Coming Soon!</h2>
+    {% endfor %}
+    </div>
+
+  <div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+</main>
+{% endblock content %}

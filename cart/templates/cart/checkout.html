@@ -1,0 +1,81 @@
+{% extends "art/base.html" %}
+{% load static %}
+
+{% block title %}Checkout{% endblock %}
+
+
+{% block content %}
+<main class="main-structure primary-color-bg">
+  <div class="light-form">
+
+    <h2 class="align-center">Shipping Information</h2>
+    <table class="align-table address">
+
+        <tr>
+          <th>Name:</th>
+          <td>{{ cart_user.first_name }} {{ cart_user.last_name }}</td>
+        </tr>
+        <tr>
+          <th>Address:</th>
+          <td>{{ cart_user.address }}</td>
+        </tr>
+        <tr>
+          <th>City:</th>
+          <td>{{ cart_user.city }}</td>
+        </tr>
+        <tr>
+          <th>State:</th>
+          <td>{{ cart_user.state }}</td>
+        </tr>
+        <tr>
+          <th>Zip Code:</th>
+          <td>{{ cart_user.zip_code }}</td>
+        </tr>
+        <tr>
+          <td colspan="2" class="align-center top-padding">
+            To make any changes go to
+            <a href="{% url 'accounts:edit-shipping-address' %}"
+                >Update Address</a>
+          </td>
+        </tr>
+    </table>
+  </div>
+
+    <div class="light-form">
+      <h2 class="align-center">Order Summary</h2>
+        <table class="align-table order">
+          <tr>
+            <th>no.</th>
+            <th>Item</th>
+            <th>Price</th>
+            <th>Qty</th>
+            <th>Extended Price</th>
+          </tr>
+
+          {% for item in order %}
+            <tr>
+              <td>{{ forloop.counter }}</td>
+              <td>{{ item.items.title }}</td>
+              <td>${{ item.items.get_display_price }}</td>
+              <td>{{ item.quantity }}</td>
+              <td>${{ item.total_price }}</td>
+            </tr>
+              {% endfor %}
+          <tr>
+            <td colspan="5" class="align-center">
+              <strong>Order Total ${{ cart_total }}</strong>
+            </td>
+          </tr>
+        </table>
+        <h5 class="align-center">
+          You will be forwarded to Stripe to process the payment.
+        </h5>
+        <form action="/create-checkout-session/" method="POST"
+          class="align-center">
+          {% csrf_token %}
+       <button type="submit" id="checkout-button"
+       class="green-button">Checkout</button>
+     </form>
+      </div>
+</main>
+{% endblock content %}

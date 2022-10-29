@@ -1,0 +1,17 @@
+{% extends "art/base.html" %}
+
+{% block title %}User Registration Success{% endblock title %}
+
+{% block content %}
+<main class="main-structure primary-color-bg">
+  <div class="light-form">
+    <h2 class="align-center">User Registration Success</h2>
+    <p class="align-center">You have successfully registered.</p>
+
+    <section class="align-center">
+      <a href="{% url 'login' %}?next=/">
+        <input type="submit" value="Log In" class="light-button"></a>
+    </section>
+  </div>
+</main>
+{% endblock content %}

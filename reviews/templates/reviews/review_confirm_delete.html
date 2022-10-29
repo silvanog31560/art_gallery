@@ -1,0 +1,28 @@
+{% extends "art/base.html" %}
+
+{% block title %}Delete Review{% endblock title %}
+
+{% block content %}
+<main class="main-structure primary-color-bg">
+  <div class="light-form">
+    <h2 class="align-center">Delete Review</h2>
+    {% if request.user != review_delete.user %}
+      <h2 class="align-center">Review not found!</h2>
+    {% else %}
+      <form method="post">
+        {% csrf_token %}
+        <table class="align-table">
+          <tr>
+            <td colspan=2 align="center">Are you sure you want to delete your review?</td>
+          </tr>
+          <tr>
+            <td colspan=2 align="center">
+              <a href="{% url 'reviews:reviews-list' %}"
+                class="light-button">Cancel</a>
+              <input type="submit" value="Delete" class="red-button">
+            </td>
+          </tr>
+        </table>
+      </form>
+    {% endif %}
+{% endblock content %}

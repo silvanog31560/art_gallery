@@ -1,0 +1,54 @@
+{% extends "art/base.html" %}
+
+{% block title %}Art List{% endblock title %}
+
+{% block content %}
+<main class="main-structure primary-color-bg">
+  <div class="">
+    <h2 class="align-center">Reviews</h2>
+
+    {% for review in review_list %}
+      <section class="light-form">
+        <h2 class="align-center">{{ review }}</h2>
+        <p>{{ review.review }}</p>
+        {% if request.user == review.user %}
+          <button class="review-btn-menu">
+            <i data-feather="menu"></i>
+          </button>
+          <span id="review-menu" class="hide">
+            <a href="{% url 'reviews:edit-review' review.id %}"
+              class="light-button">Edit Review</a>
+            <a href="{% url 'reviews:delete-review' review.id %}"
+              class="light-button">Delete Review</a>
+          </span>
+        {% endif %}
+      </section>
+    {% empty %}
+      <h2>No Reviews Available</h2>
+    {% endfor %}
+
+    <section id="review-btn">
+      <a href="{% url 'reviews:create-review' %}"
+      class="light-button push">Leave a Review</a>
+    </section>
+
+    <div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+    </div>
+  </div>
+</main>
+{% endblock content %}
