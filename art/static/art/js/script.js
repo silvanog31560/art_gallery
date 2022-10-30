@@ -5,6 +5,9 @@ toggle between hiding and showing the dropdown content */
 const drop_btn = document.querySelector(".dropbtn");
 const review_btn = document.querySelector(".review-btn-menu");
 
+drop_btn.addEventListener("click", myFunction);
+review_btn.addEventListener("click", reviewFunction);
+
 function myFunction() {
   document.getElementById("myDropdown").classList.toggle("show");
 }
@@ -23,14 +26,10 @@ window.onclick = function(event) {
   }
 }
 
-drop_btn.addEventListener("click", myFunction);
 
 // review_list.html
-// const is at top
 
 function reviewFunction(){
   var x = document.getElementById("review-menu");
   x.classList.toggle('hide');
 }
-
-review_btn.addEventListener("click", reviewFunction);
