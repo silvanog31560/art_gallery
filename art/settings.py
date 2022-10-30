@@ -91,6 +91,12 @@ DATABASES = {
         'USER': os.environ.get('DB_USER'),
         'PASSWORD': os.environ.get('DB_PASSWORD'),
         'HOST': 'aryannasart.mysql.pythonanywhere-services.com',
+        'OPTIONS': {
+            # Enable MySQL strict mode. "MySQL's Strict Mode fixes many data
+            # integrity problems in MySQL, such as data truncation upon
+            # insertion, by escalating warnings into errors."
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
     }
 }
 
