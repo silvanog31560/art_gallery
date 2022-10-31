@@ -1,4 +1,5 @@
 # Django #
+/art_root/art/static/
 *.log
 *.pot
 *.pyc
