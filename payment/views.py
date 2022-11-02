@@ -14,7 +14,7 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 class CreateCheckoutSessionView(View):
 
     def post(self, request,  *args, **kwargs):
-        YOUR_DOMAIN = "http://127.0.0.1:8000/"
+        YOUR_DOMAIN = "https://aryannasart.pythonanywhere.com/"
         existing_order =  UserItem.objects.filter(user=request.user.id, invoice="")
         stripe_total = sum(item.stripe_price for item in existing_order)
         try:
