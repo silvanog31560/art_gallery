@@ -1,6 +1,5 @@
 from django.db import models
 from django.urls import reverse
-from django.contrib.staticfiles.storage import staticfiles_storage
 
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill, Transpose
@@ -9,8 +8,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
 class Watermark(object):
     def process(self, image):
-        file = staticfiles_storage.url('art/images/watermark.png')
-        watermark = Image.open(file)
+        watermark = Image.open('watermark.png')
         image = image.convert("RGBA")
         watermark = watermark.convert("RGBA")
         width = (image.width - watermark.width) // 2
