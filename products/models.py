@@ -4,12 +4,13 @@ from django.urls import reverse
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill, Transpose
 from imagekit.models import ProcessedImageField
-from PIL import Image, ImageDraw, ImageFont, ImageFilter
+from PIL import Image
+import urllib.request
 
 class Watermark(object):
     def process(self, image):
+        urllib.request.urlretrieve('https://aryannaartpics.s3.us-east-2.amazonaws.com/static/art/images/watermark.png', 'watermark.png')
         watermark = Image.open('watermark.png')
-        image = image.convert("RGBA")
         watermark = watermark.convert("RGBA")
         width = (image.width - watermark.width) // 2
         height = (image.height - watermark.height) // 2
