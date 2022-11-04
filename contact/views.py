@@ -1,10 +1,10 @@
-from django.shortcuts import render
 from django.views.generic import FormView
-from django.core.mail import send_mail
 from django.conf import settings
 
 from .forms import ContactForm
-
+import sendgrid
+import os
+from sendgrid.helpers.mail import Mail, Email, To, Content
 
 
 
@@ -22,12 +22,12 @@ class ContactForm(FormView):
     def form_valid(self,form):
         form.save()
         cd = form.cleaned_data
-        email_subject=f"From: {cd['email']}; Subject: {cd['subject']}"
-        email_message=cd['message']
-        send_mail(
-            email_subject,
-            email_message,
-            settings.CONTACT_EMAIL,
-            [settings.CONTACT_EMAIL]
-        )
+        sg = sendgrid.SendGridAPIClient(api_key=os.environ.get('SENDGRID_API_KEY'))
+        from_email = Email(settings.CONTACT_EMAIL)
+        to_email = To(settings.CONTACT_EMAIL)
+        subject = f"From: {cd['email']}; Subject: {cd['subject']}"
+        content = Content("text/plain", cd['message'])
+        mail = Mail(from_email, to_email, subject, content)
+        mail_json = mail.get()
+        sg.client.mail.send.post(request_body=mail_json)
         return super().form_valid(form)
