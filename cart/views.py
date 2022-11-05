@@ -1,25 +1,24 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import TemplateView
-from django.core.mail import send_mail
 import stripe
 from datetime import date
 import datetime
 from django.utils import timezone
 from django.views.generic import ListView
 from django.contrib.auth.decorators import permission_required
-from django.conf import settings
 
 from .models import UserItem
 from products.models import Product
 from products.views import UserAccessMixin
 from accounts.models import ShippingAddress
 from .extras import generate_order_id
+import sendgrid
+import os
+from sendgrid.helpers.mail import Mail, Email, To, Content
 
 # Create your views here.
 @login_required()
@@ -136,20 +135,21 @@ def success(request):
             order_item.save()
             product_detail += f"Qty:{order_item.quantity} Item:{order_item.items.title}\n"
 
-        send_mail(
-            subject="Invoice from Art",
-            message=f"""Thank you for your purchase!
+        customer_message=f"""Thank you for your purchase!
             Your reference number is: {invoice_number}
             Purchase details:
                 {product_detail}
-            Total price: ${cart_total}""",
-            recipient_list=[request.user.email],
-            from_email=settings.CONTACT_EMAIL,
-        )
+            Total price: ${cart_total}"""
+        sg = sendgrid.SendGridAPIClient(api_key=os.environ.get('SENDGRID_API_KEY'))
+        customer_from_email = Email(settings.CONTACT_EMAIL)
+        customer_to_email = To(request.user.email)
+        customer_subject = "Payment Confirmation"
+        customer_content = Content("text/plain", customer_message)
+        customer_mail = Mail(customer_from_email, customer_to_email, customer_subject, customer_content)
+        customer_mail_json = customer_mail.get()
+        sg.client.mail.send.post(request_body=customer_mail_json)
 
-        send_mail(
-            subject=f"New Order {invoice_number}",
-            message=f"""
+        admin_message=f"""
             Reference number: {invoice_number}
             Order details:
                 {product_detail}
@@ -161,10 +161,14 @@ def success(request):
             {customer.state}
             {customer.zip_code}
             {request.user.email}
-            """,
-            recipient_list=[settings.CONTACT_EMAIL],
-            from_email=settings.CONTACT_EMAIL,
-        )
+            """
+        admin_from_email = Email(settings.CONTACT_EMAIL)
+        admin_to_email = To(settings.CONTACT_EMAIL)
+        admin_subject = f"New Order {invoice_number}"
+        admin_content = Content("text/plain", admin_message)
+        admin_mail = Mail(admin_from_email, admin_to_email, admin_subject, admin_content)
+        admin_mail_json = admin_mail.get()
+        sg.client.mail.send.post(request_body=admin_mail_json)
 
 
     context={
@@ -189,19 +193,22 @@ def pending_order_update(request, **kwargs):
     if request.method == "POST":
         tracking = request.POST['tracking']
         UserItem.objects.filter(invoice=invoice_number).update(tracking_number=tracking)
-        send_mail(
-                subject=f"{invoice_number} Order Shipped",
-                message=f"""
+        message=f"""
                 Your order has shipped!
                 Reference number: {invoice_number}
                 Tracking number:{tracking}
                 Thank you for your purchase! We appreciate your business.
-                Please feel free to come back to WEBSITE and leave feedback and share
+                Please feel free to come back to aryannasart.pythonanywhere.com/reviews/ and leave feedback and share
                 your experience!
-                """,
-                recipient_list=[customer.user.email,],
-                from_email=settings.CONTACT_EMAIL,
-            )
+                """
+        sg = sendgrid.SendGridAPIClient(api_key=os.environ.get('SENDGRID_API_KEY'))
+        from_email = Email(settings.CONTACT_EMAIL)
+        to_email = To(customer.user.email)
+        subject = f"{invoice_number} Order Shipped"
+        content = Content("text/plain", message)
+        mail = Mail(from_email, to_email, subject, content)
+        mail_json = mail.get()
+        sg.client.mail.send.post(request_body=mail_json)
         return redirect(reverse('shopping_cart:pending-orders'))
 
     context={

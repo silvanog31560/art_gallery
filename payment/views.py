@@ -1,13 +1,14 @@
 import stripe
 from django.views import View
 from django.conf import settings
-from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import redirect
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.core.mail import send_mail
 
 from cart.models import UserItem
-from products.models import Product
+import sendgrid
+import os
+from sendgrid.helpers.mail import Mail, Email, To, Content
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -69,20 +70,22 @@ def stripe_webhook(request):
         paid_order = session["metadata"]["existing_order"]
         amount_total = str(session["amount_total"])
         amount_total = amount_total[:-2]+"."+amount_total[-2:]
-        # print(session)
 
-        send_mail(
-            subject="Payment Confirmation",
-            message=f"""
+        message=f"""
             Customer's Name: {customer_name}
             Customer's Email: {customer_email}
             Order:
             {paid_order}
             Total:${amount_total}
-            """,
-            recipient_list=[settings.CONTACT_EMAIL],
-            from_email=settings.CONTACT_EMAIL,
-        )
+            """
+        sg = sendgrid.SendGridAPIClient(api_key=os.environ.get('SENDGRID_API_KEY'))
+        from_email = Email(settings.CONTACT_EMAIL)
+        to_email = To(settings.CONTACT_EMAIL)
+        subject = "Payment Confirmation"
+        content = Content("text/plain", message)
+        mail = Mail(from_email, to_email, subject, content)
+        mail_json = mail.get()
+        sg.client.mail.send.post(request_body=mail_json)
 
     # Passed signature verification
     return HttpResponse(status=200)
