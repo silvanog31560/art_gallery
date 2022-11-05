@@ -23,7 +23,7 @@ class ContactForm(FormView):
         form.save()
         cd = form.cleaned_data
         sg = sendgrid.SendGridAPIClient(api_key=os.environ.get('SENDGRID_API_KEY'))
-        from_email = Email(settings.CONTACT_EMAIL)
+        from_email = Email(settings.ADMIN_EMAILS)
         to_email = To(settings.CONTACT_EMAIL)
         subject = f"From: {cd['email']}; Subject: {cd['subject']}"
         content = Content("text/plain", cd['message'])
