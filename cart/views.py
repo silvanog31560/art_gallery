@@ -135,14 +135,16 @@ def success(request):
             order_item.save()
             product_detail += f"Qty:{order_item.quantity} Item:{order_item.items.title}\n"
 
-        customer_message=f"""Thank you for your purchase!
+        customer_message=f"""
+            Forward to {request.user.email}
+            Thank you for your purchase!
             Your reference number is: {invoice_number}
             Purchase details:
                 {product_detail}
             Total price: ${cart_total}"""
         sg = sendgrid.SendGridAPIClient(api_key=os.environ.get('SENDGRID_API_KEY'))
-        customer_from_email = Email(settings.CONTACT_EMAIL)
-        customer_to_email = To(request.user.email)
+        customer_from_email = Email(settings.ADMIN_EMAILS)
+        customer_to_email = To(settings.CONTACT_EMAIL)
         customer_subject = "Payment Confirmation"
         customer_content = Content("text/plain", customer_message)
         customer_mail = Mail(customer_from_email, customer_to_email, customer_subject, customer_content)
@@ -162,7 +164,7 @@ def success(request):
             {customer.zip_code}
             {request.user.email}
             """
-        admin_from_email = Email(settings.CONTACT_EMAIL)
+        admin_from_email = Email(settings.ADMIN_EMAILS)
         admin_to_email = To(settings.CONTACT_EMAIL)
         admin_subject = f"New Order {invoice_number}"
         admin_content = Content("text/plain", admin_message)
@@ -194,6 +196,7 @@ def pending_order_update(request, **kwargs):
         tracking = request.POST['tracking']
         UserItem.objects.filter(invoice=invoice_number).update(tracking_number=tracking)
         message=f"""
+                Forward to {customer.user.email}
                 Your order has shipped!
                 Reference number: {invoice_number}
                 Tracking number:{tracking}
@@ -202,8 +205,8 @@ def pending_order_update(request, **kwargs):
                 your experience!
                 """
         sg = sendgrid.SendGridAPIClient(api_key=os.environ.get('SENDGRID_API_KEY'))
-        from_email = Email(settings.CONTACT_EMAIL)
-        to_email = To(customer.user.email)
+        from_email = Email(settings.ADMIN_EMAILS)
+        to_email = To(settings.CONTACT_EMAIL)
         subject = f"{invoice_number} Order Shipped"
         content = Content("text/plain", message)
         mail = Mail(from_email, to_email, subject, content)
