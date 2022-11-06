@@ -8,5 +8,5 @@ class ContactForm(ModelForm):
         model = Contact
         fields = '__all__'
         widgets = {
-          'message': forms.Textarea(attrs={'rows':6, 'cols':37}),
+          'message': forms.Textarea(attrs={'rows':6, 'cols':30}),
         }
