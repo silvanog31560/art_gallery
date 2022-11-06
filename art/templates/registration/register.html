@@ -12,6 +12,15 @@
       {% csrf_token %}
     <table>
       <tbody>
+        {% if form.errors %}
+           {% for field in form %}
+               {% for error in field.errors %}
+                  <div class="form-error">
+                       <strong>{{ error|escape }}</strong>
+                  </div>
+               {% endfor %}
+           {% endfor %}
+         {% endif %}
         <tr class="bottom-padding">
           <th class="reg-th">
             <label for="id_username">Username:</label>
